@@ -6,7 +6,7 @@ const http = axios.create({
   timeout: 10000
 })
 
-http.interceptors.请求.use(cfg => {
+http.interceptors.request.use(cfg => {
   const auth = useAuthStore()
   if (auth.token) {
     cfg.headers = cfg.headers || {}
