@@ -20,37 +20,24 @@
 import { ref, onMounted } from 'vue'
 import LoadingSpinner from '../components/common/LoadingSpinner.vue'
 import ErrorBlock from '../components/common/ErrorBlock.vue'
-// 真实联调时改为 import { fetchMembers } from '../api/members'
+import { fetchMembers } from '../api/members'
+
 const members = ref([])
 const loading = ref(false)
 const error = ref('')
 
-function mockFetchMembers() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve([
-        { id: 1, name: '张三', role: '学生' },
-        { id: 2, name: '李四', role: '学生' },
-        { id: 3, name: '王老师', role: '指导老师' }
-      ])
-    }, 600)
-  })
-}
 
 async function load() {
   loading.value = true
-  error.value = ''
   try {
-    // const res = await fetchMembers()
-    // members.value = res.data || []
-    members.value = await mockFetchMembers()
+    const res = await fetchMembers()
+    members.value = res  // 这里就是数组
   } catch (e) {
-    error.value = e?.message || '请求失败'
+    error.value = e?.response?.data?.detail || e.message
   } finally {
     loading.value = false
   }
 }
-
 onMounted(load)
 </script>
 
