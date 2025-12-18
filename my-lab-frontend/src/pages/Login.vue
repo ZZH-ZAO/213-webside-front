@@ -12,7 +12,7 @@
       </label>
       <button type="submit" :disabled="loading">{{ loading ? '处理中...' : '登录' }}</button>
     </form>
-    <p class="tip">目前为模拟登录，后端接口完成后替换。</p>
+    <p class="tip">请输入用户名和密码登录</p>
   </div>
 </template>
 
@@ -20,7 +20,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter, useRoute } from 'vue-router'
-// import http from '../api/http'
+import http from '../api/http'
 
 const username = ref('')
 const password = ref('')
@@ -32,16 +32,17 @@ const route = useRoute()
 async function submit() {
   loading.value = true
   try {
-    // const res = await http.post('/auth/login', { username: username.value, password: password.value })
-    // auth.setToken(res.data.token)
-    // auth.setUser(res.data.user)
-    // 模拟
-    await new Promise(r => setTimeout(r, 700))
-    auth.setToken('FAKE_TOKEN')
-    auth.setUser({ id: 1, username: username.value, role: 'member' })
+    // 调用后端登录接口 POST /auth/login
+    const res = await http.post('/auth/login', { 
+      username: username.value, 
+      password: password.value 
+    })
+    // 后端返回 { token, user: { id, username, role } }
+    auth.setToken(res.token)
+    auth.setUser(res.user)
     router.push(route.query.redirect || '/dashboard')
   } catch (e) {
-    alert(e?.message || '登录失败')
+    alert(e?.response?.data?.detail || e?.message || '登录失败')
   } finally {
     loading.value = false
   }

@@ -1,7 +1,16 @@
 import http from './http'
 
-// 后端联调时直接使用 http.get('/members')
+// 获取成员列表
 export function fetchMembers(params = {}) {
-  // 如果后端还没准备好，可以临时返回 Promise.resolve(mock)
   return http.get('/members', { params })
+}
+
+// 创建新成员
+export function createMember(data) {
+  return http.post('/members', data)
+}
+
+// 获取单个成员
+export function getMember(id) {
+  return http.get(`/members/${id}`)
 }
